@@ -9,7 +9,7 @@ import { SplashScreen, Stack } from "expo-router";
 import { Suspense, useEffect } from "react";
 import { useColorScheme } from "react-native";
 import { TamaguiProvider, Theme, Text } from "tamagui";
-import config from "../tamagui.config";
+import config from "../../tamagui.config";
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
