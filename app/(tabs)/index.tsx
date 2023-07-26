@@ -1,12 +1,11 @@
-import { FC, useEffect, useState } from "react";
-
+import { useEffect, useState } from "react";
+import { View } from "tamagui";
 import { StyleSheet } from "react-native";
-
 import axios from "axios";
 
-import { Text, View } from "@/components/Themed";
-import { FlatList, Image } from "react-native";
+import { FlatList } from "react-native";
 import { IMovie, IMovieAPIResponse } from "@/types/types";
+import MovieCard from "@/components/MovieCard";
 
 export default function TabOneScreen() {
   const [movies, setMovies] = useState<IMovie[]>();
@@ -27,52 +26,15 @@ export default function TabOneScreen() {
   }, []);
 
   return (
-    <View style={styles.container}>
+    <View flex={1} alignItems="center" justifyContent="center">
       <FlatList
         data={movies}
-        renderItem={({ item }) => <Movie movie={item} />}
+        renderItem={({ item }) => <MovieCard movie={item} />}
         keyExtractor={(item) => item.id.toString()}
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );
 }
 
-interface MovieProps {
-  movie: IMovie;
-}
-
-const Movie: FC<MovieProps> = ({ movie }) => {
-  return (
-    <View>
-      <Text>{movie?.title}</Text>
-      <Image
-        source={{
-          uri: `https://image.tmdb.org/t/p/original/${movie.poster_path}`,
-        }}
-        style={styles.image}
-      />
-    </View>
-  );
-};
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  separator: {
-    marginVertical: 30,
-    height: 1,
-    width: "80%",
-  },
-
-  image: {
-    width: "100%",
-    aspectRatio: 3 / 4,
-  },
-});
+const styles = StyleSheet.create({});
