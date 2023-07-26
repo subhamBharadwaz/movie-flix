@@ -9,7 +9,10 @@ import { SplashScreen, Stack } from "expo-router";
 import { Suspense, useEffect } from "react";
 import { useColorScheme } from "react-native";
 import { TamaguiProvider, Theme, Text } from "tamagui";
-import config from "../tamagui.config";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+import config from "../../tamagui.config";
+
 export {
   // Catch any errors thrown by the Layout component.
   ErrorBoundary,
@@ -50,6 +53,8 @@ export default function RootLayout() {
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
+  const client = new QueryClient();
+
   return (
     <TamaguiProvider config={config}>
       <Suspense fallback={<Text>Loading...</Text>}>
@@ -57,10 +62,19 @@ function RootLayoutNav() {
           <ThemeProvider
             value={colorScheme === "dark" ? DarkTheme : DefaultTheme}
           >
-            <Stack>
-              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-              <Stack.Screen name="modal" options={{ presentation: "modal" }} />
-            </Stack>
+            <QueryClientProvider client={client}>
+              <Stack>
+                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen
+                  name="movies/[id]"
+                  options={{ title: "Movie Details" }}
+                />
+                <Stack.Screen
+                  name="modal"
+                  options={{ presentation: "modal" }}
+                />
+              </Stack>
+            </QueryClientProvider>
           </ThemeProvider>
         </Theme>
       </Suspense>
