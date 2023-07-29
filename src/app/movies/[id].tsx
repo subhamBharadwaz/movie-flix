@@ -2,6 +2,7 @@ import { IMovie } from "@/types/types";
 import axios from "axios";
 import { useLocalSearchParams } from "expo-router";
 import * as React from "react";
+import { StyleSheet } from "react-native";
 import {
   Image,
   Spinner,
@@ -12,10 +13,16 @@ import {
   H2,
   SizableText,
   H3,
+  View,
 } from "tamagui";
+import Animated from "react-native-reanimated";
 import { useQuery } from "@tanstack/react-query";
 import { formatNumber } from "@/utils/utils";
 import { Star } from "@tamagui/lucide-icons";
+import { transition } from "@/constants/Animations";
+import Casts from "@/components/Casts";
+import Reviews from "@/components/Reviews";
+import Recommendations from "@/components/Recommendations";
 
 const MovieDetails: React.FC = () => {
   const { id } = useLocalSearchParams();
@@ -26,11 +33,18 @@ const MovieDetails: React.FC = () => {
       const res = await axios.get(
         `https://api.themoviedb.org/3/movie/${id}?api_key=${process.env.EXPO_PUBLIC_MOVIE_DB_API_KEY}&language=en-US`
       );
+
       return await res.data;
     },
   });
 
   const releasedYear = movie?.release_date?.split("-")[0];
+
+  const budget =
+    movie?.budget === 0 ? "-" : "$" + formatNumber(movie?.budget as number);
+
+  const revenue =
+    movie?.revenue === 0 ? "-" : "$" + formatNumber(movie?.revenue as number);
 
   return (
     <ScrollView flex={1} showsVerticalScrollIndicator={false}>
@@ -40,16 +54,31 @@ const MovieDetails: React.FC = () => {
         </YStack>
       ) : (
         <YStack padding={10} space>
-          <Image
-            source={{
-              uri: `https://image.tmdb.org/t/p/original/${movie?.poster_path}`,
+          <View
+            enterStyle={{
+              scale: 1.5,
+              y: -20,
+              opacity: 0,
             }}
-            aspectRatio={1}
-            style={{ width: "100%" }}
-            resizeMode="contain"
-            borderRadius={30}
-          />
-          <YStack space="$2">
+            animation="lazy"
+          >
+            <Image
+              source={{
+                uri: `https://image.tmdb.org/t/p/original/${movie?.poster_path}`,
+              }}
+              aspectRatio={1 / 1}
+              resizeMode="contain"
+              style={{ width: "100%", borderRadius: 30 }}
+            />
+          </View>
+          <YStack
+            space="$2"
+            enterStyle={{
+              y: -20,
+              opacity: 0,
+            }}
+            animation="lazy"
+          >
             <H2>{movie?.title}</H2>
             <Text fontSize="$4">{releasedYear}</Text>
             <XStack>
@@ -61,7 +90,14 @@ const MovieDetails: React.FC = () => {
             </XStack>
           </YStack>
 
-          <XStack space>
+          <XStack
+            space
+            enterStyle={{
+              x: -20,
+              opacity: 0,
+            }}
+            animation="lazy"
+          >
             {movie?.genres?.map((g) => (
               <Text
                 paddingHorizontal="$4"
@@ -74,12 +110,39 @@ const MovieDetails: React.FC = () => {
               </Text>
             ))}
           </XStack>
-          <YStack space>
+          <YStack
+            space
+            enterStyle={{
+              y: 20,
+              opacity: 0,
+            }}
+            animation="lazy"
+          >
             <H3>Overview</H3>
             <SizableText color="#cbd5e1" fontSize="$5">
               {movie?.overview}
             </SizableText>
           </YStack>
+
+          <Casts id={id} />
+
+          <YStack space>
+            <XStack space>
+              <Text fontWeight="bold">Status</Text>
+              <Text>{movie?.status}</Text>
+            </XStack>
+            <XStack space>
+              <Text fontWeight="bold">Budget</Text>
+              <Text>{budget}</Text>
+            </XStack>
+            <XStack space>
+              <Text fontWeight="bold">Revenue</Text>
+              <Text>{revenue}</Text>
+            </XStack>
+          </YStack>
+
+          <Reviews movieId={id} />
+          <Recommendations movieId={id} title={movie?.title} />
         </YStack>
       )}
     </ScrollView>
@@ -87,3 +150,5 @@ const MovieDetails: React.FC = () => {
 };
 
 export default MovieDetails;
+
+const styles = StyleSheet.create({});

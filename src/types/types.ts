@@ -47,3 +47,25 @@ export interface IMovieAPIResponse {
   total_pages: number;
   total_results: number;
 }
+
+export interface ICast {
+  id: number;
+  name: string;
+  profile_path: string;
+  character: string;
+}
+
+export interface IReview {
+  id: string;
+  author: string;
+  content: string;
+  created_at: string;
+  updatedA_at: string;
+  url: string;
+  author_details: {
+    name: string;
+    username: string;
+    avatar_path: string;
+    rating: number;
+  };
+}
